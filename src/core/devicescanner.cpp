@@ -27,6 +27,8 @@
 
 #include <klocale.h>
 #include <kdebug.h>
+#include <Solid/Device>
+#include <Solid/Block>
 
 /** Constructs a DeviceScanner
 	@param ostack the OperationStack where the devices will be created
@@ -60,10 +62,21 @@ void DeviceScanner::scan()
 
 	clear();
 
-	QList<Device*> deviceList = CoreBackendManager::self()->backend()->scanDevices();
+	const QList<Solid::Device> driveList = Solid::Device::listFromQuery("StorageVolume.usage == 'PartitionTable'");
+	unsigned int count = 0;
+	foreach(const Solid::Device& solidDevice, driveList)
+	{
+		const Solid::Block* solidBlock = solidDevice.as<Solid::Block>();
 
-	foreach(Device* d, deviceList)
-		operationStack().addDevice(d);
+		Device* d = CoreBackendManager::self()->backend()->scanDevice(solidBlock->device());
+		if (d != NULL)
+		{
+			d->setIconName(solidDevice.icon());
+			operationStack().addDevice(d);
+		}
+
+		emit progress(solidBlock->device(), (++count)*100/driveList.count());
+	}
 
 	operationStack().sortDevices();
 }
