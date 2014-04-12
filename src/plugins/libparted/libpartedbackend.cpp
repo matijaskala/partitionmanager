@@ -432,7 +432,24 @@ Device* LibPartedBackend::scanDevice(const QString& device_node)
 	if (pedDisk)
 	{
 		const PartitionTable::TableType type = PartitionTable::nameToTableType(pedDisk->type->name);
-		CoreBackend::setPartitionTableForDevice(*d, new PartitionTable(type, firstUsableSector(*d), lastUsableSector(*d)));
+
+		quint64 firstSector = pedDisk->dev->bios_geom.sectors;
+		quint64 lastSector = pedDisk->dev->bios_geom.sectors * pedDisk->dev->bios_geom.heads * pedDisk->dev->bios_geom.cylinders - 1;
+		if (type == PartitionTable::gpt)
+		{
+			GPTDiskData* gpt_disk_data = reinterpret_cast<GPTDiskData*>(pedDisk->disk_specific);
+
+			if (gpt_disk_data) {
+				firstSector = gpt_disk_data->data_area.start;
+				lastSector = gpt_disk_data->data_area.end;
+			}
+			else {
+				firstSector += 32;
+				lastSector -= 32;
+			}
+		}
+
+		CoreBackend::setPartitionTableForDevice(*d, new PartitionTable(type, firstSector, lastSector));
 		CoreBackend::setPartitionTableMaxPrimaries(*d->partitionTable(), ped_disk_get_max_primary_partition_count(pedDisk));
 
 		scanDevicePartitions(pedDevice, *d, pedDisk);
