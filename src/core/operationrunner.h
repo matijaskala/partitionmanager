@@ -21,6 +21,8 @@
 
 #define OPERATIONRUNNER__H
 
+#include "util/libpartitionmanagerexport.h"
+
 #include <QThread>
 #include <QMutex>
 #include <qglobal.h>
@@ -35,7 +37,7 @@ class Report;
 
 	@author Volker Lanz <vl@fidra.de>
 */
-class OperationRunner : public QThread
+class LIBPARTITIONMANAGERPRIVATE_EXPORT OperationRunner : public QThread
 {
 	Q_OBJECT
 	Q_DISABLE_COPY(OperationRunner)

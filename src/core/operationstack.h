@@ -21,6 +21,8 @@
 
 #define OPERATIONSTACK__H
 
+#include "util/libpartitionmanagerexport.h"
+
 #include <QObject>
 #include <QList>
 #include <QReadWriteLock>
@@ -39,7 +41,7 @@ class DeviceScanner;
 
 	@author Volker Lanz <vl@fidra.de>
 */
-class OperationStack : public QObject
+class LIBPARTITIONMANAGERPRIVATE_EXPORT OperationStack : public QObject
 {
 	Q_OBJECT
 	Q_DISABLE_COPY(OperationStack)

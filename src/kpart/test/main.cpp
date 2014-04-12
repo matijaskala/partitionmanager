@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2010 by Volker Lanz <vl@fidra.de>                       *
+ *   Copyright (C) 2008 by Volker Lanz <vl@fidra.de>                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -17,43 +17,32 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA            *
  ***************************************************************************/
 
-#ifndef DEVICESCANNER_H
-#define DEVICESCANNER_H
+#include "kparttest.h"
 
-#include "util/libpartitionmanagerexport.h"
+#include <KApplication>
+#include <KAboutData>
+#include <KCmdLineArgs>
 
-#include <QThread>
-
-class OperationStack;
-
-/** Thread to scan for all available Devices on this computer.
-
-	This class is used to find all Devices on the computer and to create new Device instances for each of them. It's subclassing QThread to run asynchronously.
-
-	@author Volker Lanz <vl@fidra.de>
-*/
-class LIBPARTITIONMANAGERPRIVATE_EXPORT DeviceScanner : public QThread
+int main(int argc, char* argv[])
 {
-	Q_OBJECT
+	KAboutData* aboutData = new KAboutData(
+		"kparttest",
+		NULL,
+		ki18n("KDE Partition Manager KPart"), "0.1",
+		ki18n("A test application for KDE Partition Manager's KPart."),
+		KAboutData::License_GPL,
+		ki18n("Copyright (c) 2008 Volker Lanz")
+	);
 
-	public:
-		DeviceScanner(QObject* parent, OperationStack& ostack);
+	KCmdLineArgs::init(argc, argv, aboutData);
 
-	public:
-		void clear(); /**< clear Devices and the OperationStack */
-		void scan(); /**< do the actual scanning; blocks if called directly */
-		void setupConnections();
+	KCmdLineOptions options;
+	KCmdLineArgs::addCmdLineOptions(options);
 
-	signals:
-		void progress(const QString& device_node, int progress);
+	KApplication app;
 
-	protected:
-		virtual void run();
-		OperationStack& operationStack() { return m_OperationStack; }
-		const OperationStack& operationStack() const { return m_OperationStack; }
+	KPartTest* widget = new KPartTest();
+	widget->show();
 
-	private:
-		OperationStack& m_OperationStack;
-};
-
-#endif
+	return app.exec();
+}
