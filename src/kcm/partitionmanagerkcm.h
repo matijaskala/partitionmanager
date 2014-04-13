@@ -28,6 +28,7 @@
 #include <kcmodule.h>
 #include <kdebug.h>
 
+class ApplyProgressDialog;
 class PartitionManagerWidget;
 class ListDevices;
 class KActionCollection;
@@ -44,8 +45,8 @@ class PartitionManagerKCM : public KCModule, public Ui::PartitionManagerKCMBase
 		virtual ~PartitionManagerKCM() {}
 
 	public:
-		void load() {}
-		void save() {}
+		void load();
+		void save();
 
 	protected:
 		void init();
@@ -66,12 +67,17 @@ class PartitionManagerKCM : public KCModule, public Ui::PartitionManagerKCMBase
 		OperationStack& operationStack() { Q_ASSERT(m_OperationStack); return *m_OperationStack; }
 		const OperationStack& operationStack() const { Q_ASSERT(m_OperationStack); return *m_OperationStack; }
 
+		OperationRunner& operationRunner() { Q_ASSERT(m_OperationRunner); return *m_OperationRunner; }
+		const OperationRunner& operationRunner() const { Q_ASSERT(m_OperationRunner); return *m_OperationRunner; }
+
 		DeviceScanner& deviceScanner() { Q_ASSERT(m_DeviceScanner); return *m_DeviceScanner; }
 		const DeviceScanner& deviceScanner() const { Q_ASSERT(m_DeviceScanner); return *m_DeviceScanner; }
 
+		ApplyProgressDialog& applyProgressDialog() { Q_ASSERT(m_ApplyProgressDialog); return *m_ApplyProgressDialog; }
+		const ApplyProgressDialog& applyProgressDialog() const { Q_ASSERT(m_ApplyProgressDialog); return *m_ApplyProgressDialog; }
+
 	protected slots:
 		void onNewLogMessage(Log::Level logLevel, const QString& s);
-		void onApplyClicked();
 
 		void on_m_OperationStack_devicesChanged();
 		void on_m_OperationStack_operationsChanged();
@@ -80,7 +86,9 @@ class PartitionManagerKCM : public KCModule, public Ui::PartitionManagerKCMBase
 	private:
 		KActionCollection* m_ActionCollection;
 		OperationStack* m_OperationStack;
+		OperationRunner* m_OperationRunner;
 		DeviceScanner* m_DeviceScanner;
+		ApplyProgressDialog* m_ApplyProgressDialog;
 };
 
 

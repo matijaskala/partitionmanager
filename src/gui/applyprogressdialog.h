@@ -21,6 +21,8 @@
 
 #define APPLYPROGRESSDIALOG__H
 
+#include "util/libpartitionmanagerexport.h"
+
 #include <kdialog.h>
 
 #include <QTimer>
@@ -45,7 +47,7 @@ class QKeyEvent;
 
 	@author Volker Lanz <vl@fidra.de>
 */
-class ApplyProgressDialog : public KDialog
+class LIBPARTITIONMANAGERPRIVATE_EXPORT ApplyProgressDialog : public KDialog
 {
 	Q_OBJECT
 	Q_DISABLE_COPY(ApplyProgressDialog)

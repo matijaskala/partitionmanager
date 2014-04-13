@@ -21,6 +21,7 @@
 
 #include "gui/partitionmanagerwidget.h"
 #include "gui/listdevices.h"
+#include "gui/applyprogressdialog.h"
 
 #include "util/helpers.h"
 #include <core/devicescanner.h>
@@ -40,6 +41,7 @@
 
 #include <QTimer>
 #include <QReadLocker>
+#include <KMessageBox>
 
 K_PLUGIN_FACTORY(
 		PartitionManagerKCMFactory,
@@ -54,7 +56,9 @@ PartitionManagerKCM::PartitionManagerKCM(QWidget* parent, const QVariantList&) :
 	Ui::PartitionManagerKCMBase(),
 	m_ActionCollection(new KActionCollection(this, PartitionManagerKCMFactory::componentData())),
 	m_OperationStack(new OperationStack(this)),
-	m_DeviceScanner(new DeviceScanner(this, operationStack()))
+	m_OperationRunner(new OperationRunner(this, operationStack())),
+	m_DeviceScanner(new DeviceScanner(this, operationStack())),
+	m_ApplyProgressDialog(new ApplyProgressDialog(this, operationRunner()))
 {
 	Config::instance("kcm_partitionmanagerrc");
 	setupObjectNames();
@@ -197,10 +201,43 @@ void PartitionManagerKCM::enableButtons()
 	mountButton->setText(p && p->isMounted() ? "Unmount" : "Mount");
 }
 
-void PartitionManagerKCM::onApplyClicked()
+void PartitionManagerKCM::load()
 {
-	if (operationStack().size() > 0)
-		actionCollection()->action("applyAllOperations")->trigger();
+    KCModule::load();
+}
+
+void PartitionManagerKCM::save()
+{
+	QStringList opList;
+
+	foreach (const Operation* op, operationStack().operations())
+		opList.append(op->description());
+
+	if (KMessageBox::warningContinueCancelList(this,
+		i18nc("@info",
+			"<para>Do you really want to apply the pending operations listed below?</para>"
+			"<para><warning>This will permanently modify your disks.</warning></para>"),
+		opList, i18nc("@title:window", "Apply Pending Operations?"),
+		KGuiItem(i18nc("@action:button", "Apply Pending Operations"), "arrow-right"),
+		KStandardGuiItem::cancel()) == KMessageBox::Continue)
+	{
+		Log() << i18nc("@info/plain", "Applying operations...");
+
+		applyProgressDialog().show();
+
+		operationRunner().setReport(&applyProgressDialog().report());
+
+		// Undo all operations so the runner has a defined starting point
+		for (int i = operationStack().operations().size() - 1; i >= 0; i--)
+		{
+			operationStack().operations()[i]->undo();
+			operationStack().operations()[i]->setStatus(Operation::StatusNone);
+		}
+
+		pmWidget().updatePartitions();
+
+		operationRunner().start();
+	}
 
 	QTimer::singleShot(0, this, SLOT(on_m_OperationStack_operationsChanged()));
 }
