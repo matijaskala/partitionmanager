@@ -27,6 +27,7 @@
 #include <ops/newoperation.h>
 #include <ops/resizeoperation.h>
 #include <ops/deleteoperation.h>
+#include <ops/copyoperation.h>
 
 #include <config.h>
 
@@ -126,6 +127,13 @@ void PartitionManagerKCM::setupConnections()
 {
 	connect(&listDevices(), SIGNAL(selectionChanged(const QString&)), &pmWidget(), SLOT(setSelectedDevice(const QString&)));
 	connect(&listDevices(), SIGNAL(deviceDoubleClicked(const QString&)), &pmWidget(), SLOT(onPropertiesDevice(const QString&)));
+	connect(newButton, SIGNAL(clicked()), &pmWidget(), SLOT(onNewPartition()));
+	connect(resizeButton, SIGNAL(clicked()), &pmWidget(), SLOT(onResizePartition()));
+	connect(deleteButton, SIGNAL(clicked()), &pmWidget(), SLOT(onDeletePartition()));
+	connect(shredButton, SIGNAL(clicked()), &pmWidget(), SLOT(onShredPartition()));
+	connect(copyButton, SIGNAL(clicked()), &pmWidget(), SLOT(onCopyPartition()));
+	connect(pasteButton, SIGNAL(clicked()), &pmWidget(), SLOT(onPastePartition()));
+	connect(mountButton, SIGNAL(clicked()), &pmWidget(), SLOT(onMountPartition()));
 }
 
 void PartitionManagerKCM::on_m_OperationStack_operationsChanged()
@@ -148,22 +156,6 @@ void PartitionManagerKCM::on_m_PartitionManagerWidget_selectedPartitionChanged(c
 {
 	Q_UNUSED(p);
 	enableButtons();
-}
-
-void PartitionManagerKCM::on_newButton_clicked()
-{
-	pmWidget().onNewPartition();
-}
-
-void PartitionManagerKCM::on_resizeButton_clicked()
-{
-	pmWidget().onResizePartition();
-
-}
-
-void PartitionManagerKCM::on_deleteButton_clicked()
-{
-	pmWidget().onDeletePartition();
 }
 
 void PartitionManagerKCM::setupKCMWorkaround()
@@ -198,6 +190,11 @@ void PartitionManagerKCM::enableButtons()
 	bool canResize = ResizeOperation::canGrow(p) || ResizeOperation::canShrink(p) || ResizeOperation::canMove(p);
 	resizeButton->setEnabled(canResize);
 	deleteButton->setEnabled(DeleteOperation::canDelete(p));
+	shredButton->setEnabled(DeleteOperation::canDelete(p));
+	copyButton->setEnabled(CopyOperation::canCopy(p));
+	pasteButton->setEnabled(CopyOperation::canPaste(p, pmWidget().clipboardPartition()));
+	mountButton->setEnabled(p && (p->canMount() || p->canUnmount()));
+	mountButton->setText(p && p->isMounted() ? "Unmount" : "Mount");
 }
 
 void PartitionManagerKCM::onApplyClicked()

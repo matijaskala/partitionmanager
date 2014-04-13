@@ -10,7 +10,7 @@
    </rect>
   </property>
   <layout class="QGridLayout">
-   <item rowspan="8" row="0" column="0">
+   <item rowspan="12" row="0" column="0">
     <widget class="QSplitter" name="m_SplitterHorizontal" >
      <property name="orientation" >
       <enum>Qt::Horizontal</enum>
@@ -77,9 +77,30 @@
     </widget>
    </item>
    <item row="5" column="1" >
-    <widget class="QPushButton" name="unmountButton" >
+    <widget class="QPushButton" name="copyButton" >
      <property name="text" >
-      <string>Unmount</string>
+      <string>Copy</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1" >
+    <widget class="QPushButton" name="pasteButton" >
+     <property name="text" >
+      <string>Paste</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="1" >
+    <widget class="Line" name="line" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1" >
+    <widget class="QPushButton" name="mountButton" >
+     <property name="text" >
+      <string>Mount/Unmount</string>
      </property>
     </widget>
    </item>

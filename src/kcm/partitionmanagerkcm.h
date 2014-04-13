@@ -76,9 +76,6 @@ class PartitionManagerKCM : public KCModule, public Ui::PartitionManagerKCMBase
 		void on_m_OperationStack_devicesChanged();
 		void on_m_OperationStack_operationsChanged();
 		void on_m_PartitionManagerWidget_selectedPartitionChanged(const Partition* p);
-		void on_newButton_clicked();
-		void on_resizeButton_clicked();
-		void on_deleteButton_clicked();
 
 	private:
 		KActionCollection* m_ActionCollection;
