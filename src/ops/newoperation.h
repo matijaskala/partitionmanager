@@ -21,6 +21,8 @@
 
 #define NEWOPERATION__H
 
+#include "util/libpartitionmanagerexport.h"
+
 #include "ops/operation.h"
 
 #include <QString>
@@ -40,7 +42,7 @@ class CheckFileSystemJob;
 
 	@author Volker Lanz <vl@fidra.de>
 */
-class NewOperation : public Operation
+class LIBPARTITIONMANAGERPRIVATE_EXPORT NewOperation : public Operation
 {
 	friend class OperationStack;
 

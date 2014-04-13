@@ -21,6 +21,8 @@
 
 #define RESIZEOPERATION__H
 
+#include "util/libpartitionmanagerexport.h"
+
 #include "ops/operation.h"
 
 #include "core/partition.h"
@@ -47,7 +49,7 @@ class CheckFileSystemJob;
 
 	@author Volker Lanz <vl@fidra.de>
 */
-class ResizeOperation : public Operation
+class LIBPARTITIONMANAGERPRIVATE_EXPORT ResizeOperation : public Operation
 {
 	friend class OperationStack;
 

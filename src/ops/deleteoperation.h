@@ -21,6 +21,8 @@
 
 #define DELETEOPERATION__H
 
+#include "util/libpartitionmanagerexport.h"
+
 #include "ops/operation.h"
 
 #include <QString>
@@ -35,7 +37,7 @@ class DeletePartitionJob;
 /** Delete a Partition.
 	@author Volker Lanz <vl@fidra.de>
 */
-class DeleteOperation : public Operation
+class LIBPARTITIONMANAGERPRIVATE_EXPORT DeleteOperation : public Operation
 {
 	friend class OperationStack;
 

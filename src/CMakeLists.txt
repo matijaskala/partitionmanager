@@ -59,6 +59,22 @@ install(PROGRAMS partitionmanager.desktop DESTINATION ${XDG_APPS_INSTALL_DIR})
 add_subdirectory(plugins)
 
 
+option(PARTMAN_KCM "Build a kcm for KDE Partition Manager" ON)
+
+if(PARTMAN_KCM)
+        file(GLOB partitionmanagerkcm_SRCS kcm/partitionmanagerkcm.cpp)
+
+	file(GLOB partitionmanagerkcm_UIFILES kcm/*.ui)
+	kde4_add_ui_files(partitionmanagerkcm_SRCS ${partitionmanagerkcm_UIFILES})
+        kde4_add_plugin(kcm_partitionmanager ${partitionmanagerkcm_SRCS})
+
+        target_link_libraries(kcm_partitionmanager partitionmanagerprivate ${KDE4_KUTILS_LIBS} ${KDE4_KDEUI_LIBS})
+
+        install(TARGETS kcm_partitionmanager DESTINATION ${PLUGIN_INSTALL_DIR})
+        install(FILES kcm/kcm_partitionmanager.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+
+endif(PARTMAN_KCM)
+
 option(PARTMAN_KPART "Build a kpart for KDE Partition Manager" ON)
 
 if(PARTMAN_KPART)
